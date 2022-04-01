@@ -22,6 +22,11 @@ const Menu = React.forwardRef(
       paymentInfo,
       updatedPaymentInfo,
       incrementNoTicket,
+      deleteOneFromShopList,
+      reduxAddOneToShopListWithIndex,
+      addToShopList,
+      deleteFromShopList,
+      alreadyPayed
     },
     ref
   ) => {
@@ -36,7 +41,6 @@ const Menu = React.forwardRef(
 
     const callbackSetPaymentInfo = (value) => {
       const updatedPaymentInfoObj = { ...paymentInfo, ...value };
-      debugger;
       updatedPaymentInfo(updatedPaymentInfoObj);
     };
 
@@ -46,7 +50,7 @@ const Menu = React.forwardRef(
 
     useEffect(() => {
       const totalPrice = shopList.reduce(
-        (acc, el) => acc + el.price * el.quantity,
+        (acc, el) => acc + el.precio * el.quantity,
         0
       );
 
@@ -58,7 +62,17 @@ const Menu = React.forwardRef(
         {/* left */}
         <div className={styles.left} ref={componentRef}>
           <div className={styles.shopListContainer}>
-            <Ticket noTicket={noTicket} cajeroNombre={cajeroNombre} />
+            <Ticket
+              noTicket={noTicket}
+              cajeroNombre={cajeroNombre}
+              shopList={shopList}
+              deleteOneFromShopList={
+                deleteOneFromShopList
+              }
+              reduxAddOneToShopListWithIndex={reduxAddOneToShopListWithIndex}
+              addToShopList={addToShopList}
+              deleteFromShopList={deleteFromShopList}
+            />
             <div className={styles.reservedSpace}></div>
           </div>
           <div className={styles.shopInfo}>
@@ -78,6 +92,7 @@ const Menu = React.forwardRef(
           callbackSetPaymentInfo={callbackSetPaymentInfo}
           paymentInfo={paymentInfo}
           updateAlreadyPayed={updateAlreadyPayed}
+          alreadyPayed={alreadyPayed}
         />
       </div>
     );
@@ -91,17 +106,18 @@ function mapStateToProps(state) {
     shopList: state.shopList,
     noTicket: state.noTicket,
     paymentInfo: state.paymentInfo,
+    alreadyPayed: state.alreadyPayed
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    reduxAddToShopListWithIndex: bindActionCreators(
-      shopListActions.addToShopListWithIndex,
+    reduxAddOneToShopListWithIndex: bindActionCreators(
+      shopListActions.addOneToShopListWithIndex,
       dispatch
     ),
-    reduxDeleteFromShopListWithIndex: bindActionCreators(
-      shopListActions.deleteFromShopListWithIndex,
+    deleteOneFromShopList: bindActionCreators(
+      shopListActions.deleteOneFromShopList,
       dispatch
     ),
     reduxResetShopList: bindActionCreators(
@@ -120,7 +136,8 @@ function mapDispatchToProps(dispatch) {
       paymentInfoActions.updatePaymentInfo,
       dispatch
     ),
-
+    addToShopList: bindActionCreators(shopListActions.addToShopList, dispatch),
+    deleteFromShopList: bindActionCreators(shopListActions.deleteFromShopList, dispatch)
   };
 }
 
